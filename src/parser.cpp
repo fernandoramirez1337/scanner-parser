@@ -245,17 +245,17 @@ bool Parser::ReturnStmt(){
 /*
 ForStmt -> for ( ExprStmt Expression ; ) Statement
 */
-bool Parser::ForStmt(){
-  if (nonTerminal("TOKEN_for") &&
-      nonTerminal("TOKEN_(") && 
-      ExprStmt() && 
-      Expression() && 
-      nonTerminal("TOKEN_;") && 
-      nonTerminal("TOKEN_)") &&
-      Statement()) {
-    return true;
-  }
-  return false;
+bool Parser::ForStmt() {
+    if (nonTerminal("TOKEN_for") &&
+        nonTerminal("TOKEN_(") &&
+        ExprStmt() &&
+        ExprStmt() &&
+        ExprStmt() &&
+        nonTerminal("TOKEN_)") &&
+        Statement()) {
+        return true;
+    }
+    return false;
 }
 /*
 AuxIf -> else {Statement}
