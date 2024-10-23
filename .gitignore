@@ -1,0 +1,43 @@
+# Ignore the build directory
+build/
+
+# Ignore the glad directory
+glad/
+
+# Ignore all directories that start with a dot (e.g., .vscode, .idea)
+.*/
+
+# Ignore compiled binary files
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+
+# Ignore C++ cache files
+*.gch
+*.pch
+
+# Ignore IDE project files
+*.vcxproj
+*.vcxproj.filters
+*.xcworkspace
+*.cproject
+*.project
+
+# Ignore CMake-generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+Makefile
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore other common unnecessary files
+.DS_Store
+Thumbs.db
+.vscode/

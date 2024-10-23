@@ -1,0 +1,4 @@
+/* Declaracion de
+  Variables */
+int x;  // IntType Identifier ;
+int
