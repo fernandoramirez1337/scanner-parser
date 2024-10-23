@@ -51,8 +51,9 @@ if (x > 0) {
 }
 /* Funciones */
 
-int sum(int a, int b) {
-  return a + b;
-}
+[bool Respuesta (){
+if (y < 10){print("Both conditions met.");}
+else {return true;}
+}]
 
 int result = sum(3, 4);

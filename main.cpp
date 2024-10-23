@@ -9,6 +9,7 @@ int main() {
   string filename = "../code.txt";
   read_file(filename, text_Arr, sizee);
 
+  cout << endl <<  "S C A N N E R" << endl << endl;
   scanner(text_Arr);
   for (auto it = tokens.begin(); it != tokens.end(); ) {
     if (it->token_name == "TOKEN_COMLINE" || 
@@ -19,10 +20,15 @@ int main() {
         ++it;  // Only increment if no erase happened
     }
   }
+
+  cout << endl << "T O K E N S" << endl << endl;
   for (auto tok : tokens) {
     cout << tok.token_name << endl;
   }
     // Crear el objeto Parser con el vector de tokens
+  
+    cout << endl << "P A R S E R" << endl << endl;
+
     Parser parser(tokens);
 
     // Ejecutar el análisis sintáctico

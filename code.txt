@@ -1,4 +1,15 @@
 /* Declaracion de
   Variables */
 int x;  // IntType Identifier ;
-int
+int[] arr = "a";  // IntType [ ] Identifier = CharLiteral ;
+char[][][] cube;  // CharType [ ] [ ] [ ] Identifier ;
+void[][][] data = result + 5;  // VoidType [ ] [ ] [ ] Identifier = Identifier + IntegerLiteral ;
+
+/* Asignaciones */
+int x = 10;         // Asignación a variable entera.
+int y = x;          // Asignación a un elemento de un array.
+
+[bool Respuesta (){
+if (y < 10){print("Both conditions met.");}
+else {return true;}
+}]
