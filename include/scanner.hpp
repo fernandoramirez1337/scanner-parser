@@ -274,15 +274,7 @@ void scanner(char* buffer) {
         }
 
         else if (letter == '-') {
-            if (peek_char() == '-') {
-                word += get_char();
-                col_global++;
-                word += get_char();
-                col_global++;
-                cout <<"Linea "<<line_global<<" Col "<<col_global<<"\t"<<tokens_list[word]<< endl;
-                tokens.push_back(token(tokens_list[word]));
-            }
-            else if (Find_int(peek_char()) == true) {
+            if (Find_int(peek_char()) == true) {
                 word += get_char();
                 col_global++;
                 bool valid_identifier = true;
