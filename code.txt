@@ -13,3 +13,16 @@ int y = x;          // Asignación a un elemento de un array.
 if (y < 10){print("Both conditions met.");}
 else {return true;}
 }]
+
+[bool Respuesta (){
+if (y < 10){print("Both conditions met.");{if (x == 2){return false;} } }
+else {return true;}
+}]
+[void MiFuncion() {
+    int i;
+    for (i = 0; i < 10; i = i + 1;) {
+        if (i == 5) {
+            print("Reached middle.");
+        }
+    }
+}]
