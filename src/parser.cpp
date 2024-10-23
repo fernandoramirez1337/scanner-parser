@@ -261,31 +261,31 @@ bool Parser::ForStmt() {
 AuxIf -> else {Statement}
 AuxIf -> ‘’
 */
-bool Parser::AuxIf(){
-  if (nonTerminal("TOKEN_else") && 
-      nonTerminal("TOKEN_{") && 
-      Statement() && 
-      nonTerminal("TOKEN_}")) {
+bool Parser::AuxIf() {
+    if (nonTerminal("TOKEN_else") &&
+        nonTerminal("TOKEN_{") &&
+        StmtList() &&
+        nonTerminal("TOKEN_}")) {
+        return true;
+    }
     return true;
-  }
-  return true;
 }
 
 /*
 IfStmt -> if ( Expression ) {Statement} AuxIf
 */
 bool Parser::IfStmt() {
-  if (nonTerminal("TOKEN_if") && 
-      nonTerminal("TOKEN_(") && 
-      Expression() && 
-      nonTerminal("TOKEN_)") && 
-      nonTerminal("TOKEN_{") && 
-      Statement() && 
-      nonTerminal("TOKEN_}")&&
-      AuxIf()) {
-    return true;
-  }
-  return false;
+    if (nonTerminal("TOKEN_if") &&
+        nonTerminal("TOKEN_(") &&
+        Expression() &&
+        nonTerminal("TOKEN_)") &&
+        nonTerminal("TOKEN_{") &&
+        StmtList() &&
+        nonTerminal("TOKEN_}") &&
+        AuxIf()) {
+        return true;
+    }
+    return false;
 }
 
 /*
