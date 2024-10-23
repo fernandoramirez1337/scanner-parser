@@ -3,7 +3,7 @@
 int x;  // IntType Identifier ;
 int[] arr = "a";  // IntType [ ] Identifier = CharLiteral ;
 char[][][] cube;  // CharType [ ] [ ] [ ] Identifier ;
-void[][][] data = 4 + 5; 
+void[][][] data = a + 5; 
 
 /* Asignaciones */
 int x = 10;         // Asignación a variable entera.
@@ -44,8 +44,12 @@ else { int x = 0; return true;}
 [void MiFuncion() {
     int i;
     for (i = 0; i < 10; i = i + 1;) {
+        print("Reached middle.");
+
         if (i == 5) { // test comment
             print("Reached middle.");
+            int x = chega("hola");
+
         }
     }
 }]
