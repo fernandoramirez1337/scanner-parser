@@ -312,7 +312,6 @@ bool Parser::AuxPrimary() {
         nonTerminal("TOKEN_)")) {
         return true;
     }
-    else { return false; }
     return true;
 }
 
