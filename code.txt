@@ -48,8 +48,9 @@ else { int x = 0; return true;}
 
         if (i == 5) { // test comment
             print("Reached middle.");
-            int x = chega("hola");
-
+            int x = chega("hola" 1 2 3);
         }
     }
 }]
+
+            int x = chega("hola");
