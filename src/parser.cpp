@@ -306,14 +306,16 @@ bool Parser::Statement() {
 auxPrimary ::= ( ExprList )
 auxPrimary ::= ''
 */
-bool Parser::AuxPrimary(){
-  if (nonTerminal("TOKEN_(")  &&
-      ExprList() && 
-      nonTerminal("TOKEN_)")){
+bool Parser::AuxPrimary() {
+    if (nonTerminal("TOKEN_(") &&
+        ExprList() &&
+        nonTerminal("TOKEN_)")) {
+        return true;
+    }
+    else { return false; }
     return true;
-  }
-  return true;
 }
+
 
 /*
 Primary ::= Identifier auxPrimary
