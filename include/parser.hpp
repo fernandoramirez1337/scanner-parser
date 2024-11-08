@@ -9,6 +9,7 @@ using namespace std;
 struct token {
     string token_name;
     string text;
+    bool errorCount;
     int line;
     int col;
     token(string N_, string T_, int L_, int C_) { token_name = N_; text = T_; line = L_; col = C_; }
@@ -25,8 +26,9 @@ private:
   size_t current;
 
   token currToken();
+  void syncToDelimiter();
   token nextToken();
-
+  void fail(string message);
   bool nonTerminal(std::string name);
   bool Program();
   bool ProgramPrime();
