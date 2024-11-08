@@ -1,10 +1,19 @@
 #include "parser.hpp"
-
+#include "iostream"
+#include <unordered_set>
+int errorCount = 0;
+string fallo = "vacio";
+int token_num = 0;
 Parser::Parser(const std::vector<token>& tokens) : tokens(tokens), current(0) {
 }
 
 bool Parser::parse() {
-  return Program();
+    bool success = Program();
+    if (errorCount > 0) {
+        std::cerr << "Parsing completed with " << errorCount << " errors." << std::endl;
+        return false;
+    }
+    return success;
 }
 
 token Parser::currToken() {
@@ -13,6 +22,24 @@ token Parser::currToken() {
 
 token Parser::nextToken() {
   return tokens[current++];
+}
+
+void Parser::fail(string message) {
+   // std::cerr << "Error at token " << current << ": " << message << std::endl;
+    if (fallo == "vacio") { fallo = message; token_num = current;}
+    
+}
+
+void Parser::syncToDelimiter() {
+    static const unordered_set<string> delimiters = { "TOKEN_;", "TOKEN_]", "TOKEN_)" };
+
+    while (current < tokens.size() && delimiters.find(currToken().token_name) == delimiters.end()) {
+        nextToken();
+    }
+
+    if (current < tokens.size()) {
+        nextToken();
+    }
 }
 
 bool Parser::nonTerminal(std::string name) {
@@ -47,7 +74,8 @@ bool Parser::BasicType() {
       nonTerminal("TOKEN_VoidType")) {
     return true;
   }
-  return false;
+  fail("Tipo básico no valido");
+  return false ;
 }
 
 /*
@@ -57,6 +85,7 @@ bool Parser::Type() {
   if (BasicType() && TypePrime()) {
     return true;
   }
+  fail("No es un tipo valido");
   return false;
 }
 
@@ -72,6 +101,7 @@ bool Parser::Function() {
       CompoundStmt()) {
     return true;
   }
+  fail("Función mal declarada");
   return false;
 }
 
@@ -86,6 +116,7 @@ bool Parser::VarDeclPrime() {
   else if (nonTerminal("TOKEN_=") && Expression() && nonTerminal("TOKEN_;")) {
     return true;
   }
+  fail("Error en la declaracion de variable");
   return false;
 }
 
@@ -96,6 +127,7 @@ bool Parser::VarDecl() {
   if (Type() && nonTerminal("TOKEN_ID") && VarDeclPrime()) {
     return true;
   }
+  fail("Error en declaracion de variable: se esperaba un identificador o un punto y coma");
   return false;
 }
 
@@ -110,6 +142,7 @@ bool Parser::Declaration() {
   else if (VarDecl()) {
     return true;
   }
+  fail("Error en declaracion: se esperaba una función o declaracion de variable");
   return false;
 }
 
@@ -123,7 +156,15 @@ bool Parser::ProgramPrime() {
     }
     if (Declaration() && ProgramPrime()) {
         return true;
-    } else { return false;}
+    }
+    else {
+        fail("Failed to parse Declaration");
+        errorCount++;
+        cerr << "Error at token " << token_num << ": " << fallo << endl;
+        syncToDelimiter();  // Sincroniza con el siguiente delimitador
+        fallo = "vacio";
+        return ProgramPrime();
+    }
     return true;
 }
 
@@ -134,6 +175,7 @@ bool Parser::Program() {
   if (Declaration() && ProgramPrime()) {
     return true;
   }
+  fail("Error en el programa: inicio no valido");
   return false;
 }
 
@@ -157,6 +199,7 @@ bool Parser::ParamList() {
   if (Type() && nonTerminal("TOKEN_ID") && ParamListPrime()) {
     return true;
   }
+  fail("Error en lista de parámetros: se esperaba tipo e identificador");
   return false;
 }
 
@@ -178,6 +221,7 @@ bool Parser::StmtList() {
   if (Statement() && StmtListPrime()) {
     return true;
   }
+  fail("Error en lista de sentencias: sentencia no válida");
   return false;
 }
 
@@ -196,10 +240,11 @@ bool Parser::StmtListPrime() {
   CompoundStmt -> { StmtList }
 */
 bool Parser::CompoundStmt() {
-  if (nonTerminal("TOKEN_{") && StmtList() && nonTerminal("TOKEN_}")) {
-    return true;
-  }
-  return false;
+    if (nonTerminal("TOKEN_{") && StmtList() && nonTerminal("TOKEN_}")) {
+        return true;
+    }
+    fail("Error en bloque de sentencias: se esperaba '{' o '}'");
+    return false;
 }
 
 /*
@@ -213,6 +258,7 @@ bool Parser::ExprStmt(){
   else if(nonTerminal("TOKEN_;")){
     return true;
   }
+  fail("Error en sentencia de expresion: falta punto y coma");
   return false;
 }
 
@@ -227,6 +273,7 @@ bool Parser::PrintStmt(){
       nonTerminal("TOKEN_;")){
     return true;
   }
+  fail("Error en sentencia de impresión: se esperaba '(' o ')'");
   return false;
 }
 
@@ -239,6 +286,7 @@ bool Parser::ReturnStmt(){
       nonTerminal("TOKEN_;")){
     return true;
   }
+  fail("Error en sentencia de retorno: falta expresion o punto y coma");
   return false;
 }
 
@@ -255,6 +303,7 @@ bool Parser::ForStmt() {
         Statement()) {
         return true;
     }
+    fail("Error en sentencia for: se esperaba ';' o ')'");
     return false;
 }
 /*
@@ -285,6 +334,7 @@ bool Parser::IfStmt() {
         AuxIf()) {
         return true;
     }
+    fail("Error en sentencia if: se esperaba '(' o '{'");
     return false;
 }
 
@@ -350,7 +400,7 @@ bool Parser::Primary(){
       nonTerminal("TOKEN_)")){
     return true;
   }
-  
+  fail("Error en Primary: se esperaba un identificador, número, booleano, cadena de texto, o una expresion entre paréntesis.");
   return false;
 }
 
@@ -375,6 +425,7 @@ bool Parser::Factor(){
   if(Primary() && FactorPrime()){
     return true;
   }
+  fail("Error en Factor: se esperaba una expresion primaria seguida de un operador o índice opcional.");
   return false;
 }
 
@@ -387,6 +438,7 @@ bool Parser::Unary(){
   if (nonTerminal("TOKEN_!") || nonTerminal("TOKEN_-") || Factor()) {
     return true;
   }
+  fail("Error en Unary: se esperaba un operador de negación '!' o '-' o una expresion de factor.");
   return false;
 }
 
@@ -412,6 +464,7 @@ bool Parser::Term(){
   if(Unary() && TermPrime()){
     return true;
   }
+  fail("Error en Term: se esperaba una expresion unaria seguida de un operador de multiplicación, división o módulo.");
   return false;
 }
 
@@ -436,6 +489,7 @@ bool Parser::Expr(){
   if(Term() && ExprPrime()){
     return true;
   }
+  fail("Error en Expr: se esperaba un término seguido de un operador de suma o resta.");
   return false;
 }
 
@@ -462,6 +516,7 @@ bool Parser::RelExpr(){
   if(Expr()&&RelExprPrime()){
     return true;
   }
+  fail("Error en RelExpr: se esperaba una expresion relacional con operadores de comparación (<, >, <=, >=).");
   return false;
 }
 
@@ -486,6 +541,7 @@ bool Parser::EqExpr(){
   if(RelExpr() && EqExprprime()){
     return true;
   }
+  fail("Error en EqExpr: se esperaba una expresion de igualdad con operadores '==' o '!='.");
   return false;
 }
 
@@ -509,6 +565,7 @@ bool Parser::AndExpr(){
   if(EqExpr()&&AndExprPrime()){
     return true;
   }
+  fail("Error en AndExpr: se esperaba una expresion AND con el operador '&&'.");
   return false;
 }
 
@@ -532,6 +589,7 @@ bool Parser::OrExpr(){
   if (AndExpr()&& OrExprPrime()){
     return true;
   }
+  fail("Error en OrExpr: se esperaba una expresion OR con el operador '||'.");
   return false;
 }
 
@@ -554,6 +612,7 @@ bool Parser::Expression(){
   if (OrExpr()&&AuxExpression()){
     return true;
   }
+  fail("Error en Expression: se esperaba una expresion OR seguida de una posible asignación.");
   return false;
 }
 
@@ -575,5 +634,6 @@ bool Parser::ExprList(){
   if (Expression()&& ExprListPrime()){
     return true;
   }
-  return true;
+  fail("Error en ExprList: se esperaba una expresion en la lista de expresiones.");
+  return false;
 }
